@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="/Users/henry_ji/Documents/pesty/docs/assets/icon.png" width="128" alt="Pesty icon" />
+<img src="docs/assets/icon.png" width="128" alt="Pesty icon" />
 
 # Pesty
 
@@ -19,7 +19,7 @@
 
 <sub>Pesty **免费开源**。在 Mac App Store 里付费帮我我们支付 Apple Developer Program 的费用以保证软件被 Apple 认证。无需支付即可通过 [Homebrew](#install) 或 [直接下载](https://github.com/momenbasel/pesty/releases/latest) 来完全免费地获得本软件。</sub>
 
-<img src="/Users/henry_ji/Documents/pesty/docs/assets/demo.gif" width="820" alt="Pesty clipboard manager demo - color-coded clipboard strip with keyboard navigation on macOS" />
+<img src="docs/assets/demo.gif" width="820" alt="Pesty clipboard manager demo - color-coded clipboard strip with keyboard navigation on macOS" />
 
 ### ⭐ 如果 Pesty 帮助你省钱了，为本仓库点个星 —— 这真的很有用
 
