@@ -30,7 +30,7 @@
 "Keep at most" = "最多保留";
 "%d clips" = "%d 条";
 "Remove clips older than" = "移除早于";
-"History and pinboards on disk" = "磁盘上的历史记录和置顶";
+"History and pinboards on disk" = "历史与置顶板的磁盘占用";
 "Pruning tidies this Mac only — synced copies stay on your other devices. Pinned clips are never removed." = "清理仅影响此 Mac——已同步的副本仍保留在你的其他设备上。置顶的剪贴内容会保留";
 "Pruning applies to this Mac's history. Pinned clips are never removed." = "仅清理此 Mac 的历史记录。置顶的剪贴内容会保留";
 "Remove %d Clips?" = "移除 %d 条？";

@@ -362,38 +362,44 @@ private struct HistoryRetentionSettings: View {
         } header: {
             Text("History".localized)
         } footer: {
-            if draftMode != .itemCount {
-                VStack(alignment: .leading, spacing: 9) {
-                    HStack {
-                        Text("Remove clips older than".localized)
-                        Spacer()
-                        Text(sliderPreset.title)
-                            .fontWeight(.semibold)
-                            .foregroundStyle(Color.accentColor)
-                    }
-                    Slider(value: $sliderValue,
-                           in: 0...Double(HistoryRetentionPreset.allCases.count - 1),
-                           step: 1,
-                           onEditingChanged: { editing in
-                               sliderEditing = editing
-                               if !editing { applySliderValue() }
-                           })
-                    HStack(spacing: 0) {
-                        ForEach(HistoryRetentionPreset.allCases) { preset in
-                            Text(preset.shortTitle)
-                                .font(.system(size: 10, weight: preset == sliderPreset ? .bold : .medium))
-                                .foregroundStyle(preset == sliderPreset ? Color.accentColor : .secondary)
-                                .frame(maxWidth: .infinity)
+            // Section footers lay several children out side by side, which
+            // squeezes the footnote and the storage row into one line. One
+            // VStack keeps them stacked and each one full width.
+            VStack(alignment: .leading, spacing: 6) {
+                if draftMode != .itemCount {
+                    VStack(alignment: .leading, spacing: 9) {
+                        HStack {
+                            Text("Remove clips older than".localized)
+                            Spacer()
+                            Text(sliderPreset.title)
+                                .fontWeight(.semibold)
+                                .foregroundStyle(Color.accentColor)
+                        }
+                        Slider(value: $sliderValue,
+                               in: 0...Double(HistoryRetentionPreset.allCases.count - 1),
+                               step: 1,
+                               onEditingChanged: { editing in
+                                   sliderEditing = editing
+                                   if !editing { applySliderValue() }
+                               })
+                        HStack(spacing: 0) {
+                            ForEach(HistoryRetentionPreset.allCases) { preset in
+                                Text(preset.shortTitle)
+                                    .font(.system(size: 10, weight: preset == sliderPreset ? .bold : .medium))
+                                    .foregroundStyle(preset == sliderPreset ? Color.accentColor : .secondary)
+                                    .frame(maxWidth: .infinity)
+                            }
                         }
                     }
+                    .padding(.vertical, 2)
                 }
-                .padding(.vertical, 2)
+                Text(footnote)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .padding(.top, draftMode == .itemCount ? 0 : 4)
+                LabeledContent("History and pinboards on disk".localized, value: storageSummary)
             }
-            Text(footnote)
-                .font(.caption)
-                .foregroundStyle(.secondary)
-                .padding(.top, draftMode == .itemCount ? 0 : 4)
-            LabeledContent("History and pinboards on disk".localized, value: storageSummary)
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
         .task {
             await refreshStorageSize()

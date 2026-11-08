@@ -1,5 +1,6 @@
 import AppKit
 import ImageIO
+import os
 import QuickLookThumbnailing
 import UniformTypeIdentifiers
 
@@ -16,6 +17,8 @@ private let maxPreviewPixels = 512
 /// actor and fills caches bounded by count and byte cost.
 @MainActor
 enum ClipPreviewProvider {
+    private static let purgeLog = Logger(subsystem: "com.greycorelabs.pesty", category: "memory")
+
     struct FileInfo {
         let icon: NSImage
         let isMissing: Bool
@@ -65,6 +68,7 @@ enum ClipPreviewProvider {
     /// Badge icons stay: they are a few kilobytes each and cost a Finder
     /// round-trip to rebuild.
     static func purgeImages() {
+        purgeLog.debug("purging decoded card images after the bar stayed closed")
         images.removeAllObjects()
     }
 
