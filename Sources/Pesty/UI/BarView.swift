@@ -72,7 +72,7 @@ struct BarView: View {
                            alignment: .leading)
                 Spacer(minLength: 10)
                 panelControls
-                Spacer(minLength: 10)
+                    .padding(.trailing, 2)
                 if store.multiSelectedIDs.count > 1 {
                     bulkDeleteButton
                 }

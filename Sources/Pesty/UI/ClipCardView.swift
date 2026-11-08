@@ -113,9 +113,20 @@ struct ClipCardView: View {
                 .padding(.top, showsImage ? 0 : 11)
             footer
                 .padding(.horizontal, Theme.contentInset)
+                .padding(.bottom, footerBottomGap)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Theme.cardBody)
+    }
+
+    /// The footer used to sit on the card's lower edge. File and link cards
+    /// stack a title or a path above the status line, so they need a wider gap
+    /// than text and image cards to look deliberate.
+    private var footerBottomGap: CGFloat {
+        switch item.type {
+        case .file, .link: return 13
+        default: return 7
+        }
     }
 
     private var showsImage: Bool {

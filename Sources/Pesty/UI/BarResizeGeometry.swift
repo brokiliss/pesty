@@ -7,10 +7,10 @@ enum BarResizeGeometry {
     static let minimumHeight = 300.0
     static let maximumHeight = 720.0
 
-    /// The bar floats instead of touching the screen edges: 32 pt at the sides
-    /// and 28 pt above the Dock area, close to one card gap so the frame reads
-    /// as a deliberate shelf rather than a cut-off panel.
-    static let sideInset: CGFloat = 32
+    /// The bar floats instead of touching the screen edges: 48 pt at the sides
+    /// and 28 pt above the Dock area, so the frame reads as a deliberate shelf
+    /// and still clears a Dock that lives on a side edge.
+    static let sideInset: CGFloat = 48
     static let bottomInset: CGFloat = 28
 
     /// Returns a value which is safe to persist independently of the display
