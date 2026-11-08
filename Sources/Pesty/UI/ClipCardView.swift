@@ -109,14 +109,30 @@ struct ClipCardView: View {
         VStack(alignment: .leading, spacing: 0) {
             content
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-                .padding(.horizontal, showsImage ? 0 : Theme.contentInset)
-                .padding(.top, showsImage ? 0 : 11)
+                .padding(contentPadding)
             footer
                 .padding(.horizontal, Theme.contentInset)
                 .padding(.bottom, footerBottomGap)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Theme.cardBody)
+    }
+
+    /// Text gets the same inset on all four sides, so the block sits inside a
+    /// frame instead of running into the header and the footer. 14 pt is the
+    /// rhythm the header and footer already use, and it is about 1.1 times the
+    /// 12.5 pt body font. Inside the 215 pt card that leaves a 187 pt wide box.
+    /// The body is 203 pt tall at the default bar height, so the padded box is
+    /// 175 pt: ten lines of 12.5 pt text still fit with room to spare.
+    private var contentPadding: EdgeInsets {
+        if item.type == .text {
+            return EdgeInsets(top: Theme.contentInset,
+                              leading: Theme.contentInset,
+                              bottom: Theme.contentInset,
+                              trailing: Theme.contentInset)
+        }
+        let side = showsImage ? 0 : Theme.contentInset
+        return EdgeInsets(top: showsImage ? 0 : 11, leading: side, bottom: 0, trailing: side)
     }
 
     /// The footer used to sit on the card's lower edge. File and link cards
