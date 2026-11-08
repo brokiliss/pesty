@@ -1,6 +1,13 @@
 import Foundation
 import Observation
 
+extension Notification.Name {
+    /// Posted after the interface language changed. AppKit surfaces that are
+    /// built once at launch - the main menu and the status menu - rebuild their
+    /// titles from this; everything in SwiftUI re-renders on its own.
+    static let pestyLocalizationDidChange = Notification.Name("pesty.localizationDidChange")
+}
+
 @Observable
 final class LocalizationManager {
     nonisolated(unsafe) static let shared = LocalizationManager()
@@ -10,6 +17,7 @@ final class LocalizationManager {
             guard language != oldValue else { return }
             UserDefaults.standard.set(language.rawValue, forKey: "appLanguage")
             loadTranslations()
+            NotificationCenter.default.post(name: .pestyLocalizationDidChange, object: nil)
         }
     }
 

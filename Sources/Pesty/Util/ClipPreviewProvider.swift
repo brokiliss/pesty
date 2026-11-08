@@ -5,8 +5,9 @@ import UniformTypeIdentifiers
 
 /// Cards are 215 points wide, so a full-size screenshot would only cost
 /// memory. At 512 pixels on the longest side a preview still covers a card on
-/// a 2x display with room to spare, and decoding the same picture at 1024
-/// costs about 2.3 times the bytes for no visible gain.
+/// a 2x display with room to spare; the same pictures decoded at 1024 left
+/// about 2.3 times the resident bytes in a 16-screenshot run (49 MB against
+/// 21 MB), for no gain the eye can see at card size.
 private let maxPreviewPixels = 512
 
 /// What a card would otherwise read from disk on every render: the picture for
@@ -22,9 +23,10 @@ enum ClipPreviewProvider {
 
     private static let images: NSCache<NSString, NSImage> = {
         let cache = NSCache<NSString, NSImage>()
-        // A 512px card preview costs roughly 0.6 MB, so 24 MB holds about forty
-        // pictures - several screens' worth - while capping what an idle app
-        // keeps decoded. The cache never held more than the bar could show.
+        // A 512px 16:9 card preview is about 0.6 MB, so 24 MB holds roughly
+        // forty pictures even though a 6-card-wide bar needs a small fraction
+        // of that. The old 64 MB limit let more pictures stay decoded than a
+        // session could display.
         cache.countLimit = 120
         cache.totalCostLimit = 24 * 1024 * 1024
         return cache

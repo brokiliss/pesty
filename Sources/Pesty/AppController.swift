@@ -54,6 +54,10 @@ final class AppController: NSObject, NSApplicationDelegate, NSWindowDelegate {
             self, selector: #selector(screenParametersChanged),
             name: NSApplication.didChangeScreenParametersNotification, object: nil)
 
+        NotificationCenter.default.addObserver(
+            self, selector: #selector(languageDidChange),
+            name: .pestyLocalizationDidChange, object: nil)
+
         monitor.start()
 
         HotKeyCenter.shared.onTrigger = { [weak self] in self?.toggleBar() }
@@ -177,8 +181,13 @@ final class AppController: NSObject, NSApplicationDelegate, NSWindowDelegate {
         guard statusItem == nil else { return }
         let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         updateStatusItemIcon(item)
+        item.menu = makeStatusMenu()
+        statusItem = item
+    }
+
+    private func makeStatusMenu() -> NSMenu {
         let menu = NSMenu()
-        menu.addItem(withTitle: L("Open Pesty   %@".localized, Settings.shared.hotkeyDisplay),
+        menu.addItem(withTitle: L("Open Pesty   %@", Settings.shared.hotkeyDisplay),
                      action: #selector(menuOpen), keyEquivalent: "").target = self
         menu.addItem(.separator())
         menu.addItem(withTitle: "Settings…".localized, action: #selector(menuSettings), keyEquivalent: ",").target = self
@@ -190,8 +199,18 @@ final class AppController: NSObject, NSApplicationDelegate, NSWindowDelegate {
         let about = menu.addItem(withTitle: "About Pesty".localized, action: #selector(menuAbout), keyEquivalent: "")
         about.target = self
         menu.addItem(withTitle: "Quit Pesty".localized, action: #selector(menuQuit), keyEquivalent: "q").target = self
-        item.menu = menu
-        statusItem = item
+        return menu
+    }
+
+    /// AppKit menus keep the titles they were built with, so a language picked
+    /// in Settings would leave the application menu and the status menu in the
+    /// previous language until the next launch. Rebuilding them is the only way
+    /// for them to follow the switch; the pause entry keeps its current state.
+    @objc private func languageDidChange() {
+        installMainMenu()
+        guard let item = statusItem else { return }
+        item.menu = makeStatusMenu()
+        pauseMenuItem?.title = monitor.isPaused ? "Resume Pesty".localized : "Pause Pesty".localized
     }
 
     func setMenuBarIconVisible(_ visible: Bool) {
