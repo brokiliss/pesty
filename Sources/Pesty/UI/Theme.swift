@@ -43,9 +43,7 @@ extension Date {
         case ..<86_400:   return "\(Int(secs / 3600))h"
         case ..<604_800:  return "\(Int(secs / 86_400))d"
         default:
-            let f = DateFormatter()
-            f.dateFormat = "MMM d"
-            return f.string(from: self)
+            return Self.shortDate.string(from: self)
         }
     }
 
@@ -53,7 +51,22 @@ extension Date {
         let secs = -timeIntervalSinceNow
         if secs < 8 { return "Just now".localized }
         let f = RelativeDateTimeFormatter()
+        f.locale = Self.appLocale
         f.unitsStyle = .full
         return f.localizedString(for: self, relativeTo: Date())
+    }
+
+    /// Dates follow the language picked inside the app, not the system one: an
+    /// English Mac running the Chinese interface should read 11月8日 and 2 小时前.
+    private static var appLocale: Locale {
+        Locale(identifier: LocalizationManager.shared.language.localeCode)
+    }
+
+    private static var shortDate: DateFormatter {
+        let locale = appLocale
+        let f = DateFormatter()
+        f.locale = locale
+        f.dateFormat = DateFormatter.dateFormat(fromTemplate: "MMMd", options: 0, locale: locale) ?? "MMM d"
+        return f
     }
 }

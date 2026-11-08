@@ -164,3 +164,7 @@ Pesty 重构了 Paste 中的常用模块 - 上滑面板，多色卡片，置顶�
 ## 免责声明
 
 Pesty 是一个独立项目，**不隶属于且不被** Paste 及其商标所有者 (Wonder Warp / FIPLAB) **承认**，与之**没有任何关联**。"Paste" 仅用于描述灵感来源，所有商标均归属其原本所有者。
+
+## 致谢
+
+中文界面基于 [henry-ji](https://github.com/henry-ji) 在 PR #111 中提交的翻译整理。

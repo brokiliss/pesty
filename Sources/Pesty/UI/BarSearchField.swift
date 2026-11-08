@@ -66,15 +66,10 @@ struct NativeBarSearchField: NSViewRepresentable {
         field.isSelectable = true
         field.usesSingleLineMode = true
         field.lineBreakMode = .byTruncatingTail
-        field.placeholderString = "Search".localized
         field.font = .systemFont(ofSize: 13, weight: .medium)
         // Matches Theme.chromeTextPrimary (Color.white.opacity(0.95)).
         field.textColor = NSColor.white.withAlphaComponent(0.95)
-        let placeholderColor = NSColor.white.withAlphaComponent(0.55)
-        field.placeholderAttributedString = NSAttributedString(
-            string: "Search".localized,
-            attributes: [.foregroundColor: placeholderColor]
-        )
+        applyPlaceholder(to: field)
         field.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         bridge.install(field)
         return field
@@ -83,8 +78,22 @@ struct NativeBarSearchField: NSViewRepresentable {
     func updateNSView(_ field: NSTextField, context: Context) {
         context.coordinator.parent = self
         bridge.install(field)
+        // The placeholder is an AppKit string captured at creation, so it has
+        // to be reapplied here for a language change to reach it.
+        applyPlaceholder(to: field)
         // Reassigning an equal value resets the native caret and selection.
         if field.stringValue != text { field.stringValue = text }
+    }
+
+    private func applyPlaceholder(to field: NSTextField) {
+        // Setting the attributed placeholder clears `placeholderString`, so the
+        // applied title is read back from the attributed value.
+        let title = "Search".localized
+        guard field.placeholderAttributedString?.string != title else { return }
+        field.placeholderAttributedString = NSAttributedString(
+            string: title,
+            attributes: [.foregroundColor: NSColor.white.withAlphaComponent(0.55)]
+        )
     }
 
     static func dismantleNSView(_ field: NSTextField, coordinator: Coordinator) {

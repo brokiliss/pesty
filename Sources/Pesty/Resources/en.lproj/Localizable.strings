@@ -90,7 +90,7 @@
 "Default" = "Default";
 "Vibrant" = "Vibrant";
 "Accent shades" = "Accent shades";
-"Match each clip to its source app\u2019s familiar card color." = "Match each clip to its source app\u2019s familiar card color.";
+"Match each clip to its source app’s familiar card color." = "Match each clip to its source app’s familiar card color.";
 "Use a stronger, higher-contrast version of each source app color." = "Use a stronger, higher-contrast version of each source app color.";
 "Give each source app a stable lighter or darker shade of one color." = "Give each source app a stable lighter or darker shade of one color.";
 "Base color" = "Base color";
@@ -130,6 +130,7 @@
 
 /* Settings – About */
 "Version %@" = "Version %@";
+"Press keys…" = "Press keys…";
 "A free, open-source clipboard manager for macOS.\nInspired by Paste." = "A free, open-source clipboard manager for macOS.\nInspired by Paste.";
 "GitHub" = "GitHub";
 "Report an Issue" = "Report an Issue";
@@ -156,7 +157,7 @@
 "Turn on iCloud sync" = "Turn on iCloud sync";
 "Clear search" = "Clear search";
 "Nothing copied yet" = "Nothing copied yet";
-"No matches for \u201C%@\u201D" = "No matches for \u201C%@\u201D";
+"No matches for “%@”" = "No matches for “%@”";
 
 /* Clip card */
 "%d files" = "%d files";

@@ -91,7 +91,7 @@
 "Default" = "默认";
 "Vibrant" = "鲜艳";
 "Accent shades" = "强调色渐变";
-"Match each clip to its source app\u2019s familiar card color." = "使用来源应用的常用卡片颜色";
+"Match each clip to its source app’s familiar card color." = "使用来源应用的常用卡片颜色";
 "Use a stronger, higher-contrast version of each source app color." = "使用更鲜艳，对比度更高的版本";
 "Give each source app a stable lighter or darker shade of one color." = "使用同一颜色的渐变变体";
 "Base color" = "基准颜色";
@@ -130,7 +130,8 @@
 "Clear Clipboard History" = "清除剪贴板历史";
 
 /* Settings – About */
-"Version %@" = "版本 %@\n由henry_ji翻译";
+"Version %@" = "版本 %@";
+"Press keys…" = "按下按键…";
 "A free, open-source clipboard manager for macOS.\nInspired by Paste." = "一款免费、开源的 macOS 剪贴板管理器\n灵感来自 Paste";
 "GitHub" = "GitHub";
 "Report an Issue" = "报告问题";
@@ -157,7 +158,7 @@
 "Turn on iCloud sync" = "开启 iCloud 同步";
 "Clear search" = "清除搜索";
 "Nothing copied yet" = "还没有复制任何内容";
-"No matches for \u201C%@\u201D" = "没有与\u201C%@\u201D匹配的结果";
+"No matches for “%@”" = "没有与“%@”匹配的结果";
 
 /* Clip card */
 "%d files" = "%d 个文件";

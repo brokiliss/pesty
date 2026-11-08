@@ -222,7 +222,6 @@ final class Settings {
         static let clipColorTheme = "clipColorTheme"
         static let clipColorAccentHex = "clipColorAccentHex"
         static let selectedClipPosition = "selectedClipPosition"
-        static let appLanguage = "appLanguage"
     }
 
     var historyLimit: Int {
@@ -390,10 +389,6 @@ final class Settings {
         didSet { guard isLoaded else { return }; d.set(selectedClipPosition.rawValue, forKey: Keys.selectedClipPosition) }
     }
 
-    var appLanguage: AppLanguage {
-        didSet { guard isLoaded else { return }; d.set(appLanguage.rawValue, forKey: Keys.appLanguage) }
-    }
-
     private init() {
         d.register(defaults: [
             Keys.historyLimit: 500,
@@ -426,8 +421,7 @@ final class Settings {
             Keys.cloudKitSync: true,
             Keys.clipColorTheme: ClipColorTheme.default.rawValue,
             Keys.clipColorAccentHex: "#FF5A9F",
-            Keys.selectedClipPosition: SelectedClipPosition.center.rawValue,
-            Keys.appLanguage: AppLanguage.system.rawValue
+            Keys.selectedClipPosition: SelectedClipPosition.center.rawValue
         ])
         historyLimit = d.integer(forKey: Keys.historyLimit)
         historyRetentionMode = HistoryRetentionMode(rawValue: d.string(forKey: Keys.historyRetentionMode) ?? "")
@@ -460,7 +454,6 @@ final class Settings {
         clipColorTheme = ClipColorTheme(rawValue: d.integer(forKey: Keys.clipColorTheme)) ?? .default
         clipColorAccentHex = d.string(forKey: Keys.clipColorAccentHex) ?? "#FF5A9F"
         selectedClipPosition = SelectedClipPosition(rawValue: d.integer(forKey: Keys.selectedClipPosition)) ?? .center
-        appLanguage = AppLanguage(rawValue: d.string(forKey: Keys.appLanguage) ?? "") ?? .system
         isLoaded = true
         if normalizedBarHeight != storedBarHeight {
             d.set(normalizedBarHeight, forKey: Keys.barHeight)

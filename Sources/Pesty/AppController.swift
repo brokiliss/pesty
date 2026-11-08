@@ -208,6 +208,7 @@ final class AppController: NSObject, NSApplicationDelegate, NSWindowDelegate {
     /// for them to follow the switch; the pause entry keeps its current state.
     @objc private func languageDidChange() {
         installMainMenu()
+        settingsWindow?.title = "Pesty Settings".localized
         guard let item = statusItem else { return }
         item.menu = makeStatusMenu()
         pauseMenuItem?.title = monitor.isPaused ? "Resume Pesty".localized : "Pause Pesty".localized
