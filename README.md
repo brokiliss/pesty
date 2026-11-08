@@ -1,166 +1,85 @@
 <div align="center">
 
-<img src="docs/assets/icon.png" width="128" alt="Pesty icon" />
+<img src="docs/assets/icon.png" width="120" alt="Pesty" />
 
-# Pesty
+# Pesty 中文分支
 
-**A free, open-source clipboard manager for macOS - inspired by [Paste](https://pasteapp.io).**
+macOS 剪贴板管理器 [Pesty](https://github.com/momenbasel/pesty) 的个人分支：完整中文界面、重新排版的深色卡片、统一的音效，以及更克制的图片内存占用。
 
-Your clipboard history as a beautiful, color-coded strip that slides up from the bottom of your screen.
-
-[![Download](https://img.shields.io/github/v/release/momenbasel/pesty?label=download&style=flat-square)](https://github.com/momenbasel/pesty/releases/latest)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](LICENSE)
-![Platform](https://img.shields.io/badge/macOS-14%2B-black?style=flat-square&logo=apple)
-![Universal](https://img.shields.io/badge/Universal-Apple%20Silicon%20%2B%20Intel-orange?style=flat-square)
-
-[**Website**](https://www.moamenbasel.com/pesty/) · [Download](https://github.com/momenbasel/pesty/releases/latest) · [Homebrew](#install) · [Mac App Store](https://apps.apple.com/us/app/pesty-clipboard-manager/id6784511397)
-
-<a href="https://apps.apple.com/us/app/pesty-clipboard-manager/id6784511397"><img src="https://tools.applemediaservices.com/api/badges/download-on-the-mac-app-store/black/en-us?size=250x83" alt="Download Pesty on the Mac App Store" height="56" /></a>
-
-<sub>Pesty is **free and open source**. The one-time fee on the Mac App Store is optional - it only helps cover the yearly Apple Developer Program fee that keeps the app signed and notarized. You never have to pay it: get the exact same app for free via [Homebrew](#install) or [direct download](https://github.com/momenbasel/pesty/releases/latest).</sub>
-
-<img src="docs/assets/demo.gif" width="820" alt="Pesty clipboard manager demo - color-coded clipboard strip with keyboard navigation on macOS" />
-
-### ⭐ If Pesty saved you money, star the repo - it genuinely helps.
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+![macOS 14+](https://img.shields.io/badge/macOS-14%2B-black)
 
 </div>
 
-## What is Pesty?
+## 关于这个仓库
 
-Pesty keeps a history of everything you copy and lets you get it back instantly. Hit a global hotkey, the strip slides up, you pick a clip with the arrow keys (or `⌘1`–`⌘9`), press `return`, and it pastes straight into whatever app you were in.
+本仓库 Fork 自 [momenbasel/pesty](https://github.com/momenbasel/pesty)，基于其 `main` 分支（提交 `46031a5`）继续开发。
 
-It is a faithful, native reimplementation of the Paste experience - built in **Swift + SwiftUI**, with **zero third-party dependencies**, fully **signed and notarized** by Apple, and **free forever**.
+- 上游项目：<https://github.com/momenbasel/pesty>
+- 本分支版本：1.4.0
+- 许可：MIT，见 [LICENSE](LICENSE)
 
-## Features
+上游是一个免费开源的 macOS 剪贴板管理器，用 Swift 和 SwiftUI 写成，没有任何第三方依赖。这个分支只做 macOS 桌面端，没有改动上游的网站和文档站。
 
-- **Slide-up strip** - full-width, translucent bar that springs up from the bottom of the active screen.
-- **Color-coded cards** - each clip has a header band tinted per source app (consistent per app), with the app icon, type label, when it was copied, a preview, and a footer showing character count and a quick-paste number.
-- **All content types** - plain text, rich text, links, images, files, and colors.
-- **Pinboards** - save clips you reuse into named, color-tagged collections that never expire.
-- **iCloud sync** - optionally keep your history and pinboards in sync across your Macs via iCloud Drive.
-- **Instant search** - start typing to filter your whole history.
-- **Keyboard-first** - arrow keys to move, `return` to paste, `⌘1`–`⌘9` to quick-paste, `⌫` or `⌘⌫` to delete, `esc` to close.
-- **Paste directly** - drops the clip into the app you were using, no manual `⌘V` needed.
-- **Privacy-aware** - ignores clips marked concealed by password managers; history stored with `0600` permissions.
-- **Menu-bar app** - runs quietly as a menu-bar item, optional launch at login.
-- **Native & light** - a single universal `.app`, no Electron, no background web stack.
+## 与上游相比改了什么
 
-## Install
+### 中文界面
 
-### Homebrew (recommended)
+- 界面完整翻译为简体中文，包括设置窗口、菜单、卡片文字、提示和关于窗口。
+- 设置里的「语言」可以选「跟随系统 / English / 简体中文」。切换后窗口标题、应用菜单和状态栏菜单会立即跟着变，不需要重启。
+- 卡片里的日期和相对时间会跟随所选语言，不会出现中文界面里夹英文日期。
+- 翻译来自 [henry-ji](https://github.com/henry-ji) 在 PR #111 提交的工作，本分支合并后又补齐了若干遗漏的字符串。
 
-```bash
-brew install --cask momenbasel/pesty/pesty
-```
+### 重新排版
 
-### Direct download
+- **卡片改为深色**：正文接近黑色，文字改为白色，仍然保留按来源 App 着色的页眉。
+- **图片换成实色底板**：图片下方不再使用棋盘格，改成一块略深的实色底板，图片边缘更干净。
+- **页脚更短**：页脚高度收紧到 24 点（原来约 31 点），字号 11 点，文字与卡片底边之间按类型留白——文件、链接卡片留 13 点，文本、图片卡片留 7 点。
+- **文本卡片四边等距**：文本内容的上下左右内边距统一为 14 点，文字左边缘和页眉标题、页脚文字对齐。
+- **文本不再提前截断**：去掉固定 10 行的上限，文字会占满内边距留出的高度，只有最后一行显示省略号。
+- **面板浮起**：面板不再贴住屏幕边缘，左右各留 48 点、底边留 28 点、圆角 22 点。留白从可用区域计算，Dock 在侧面时也不会被面板盖住。
+- **高度控件移到顶栏最右端**：调节面板高度的滑块、当前高度和缩放手柄开关，从设置窗口移到了面板顶栏，紧贴最右侧的「⋯」菜单。滑块在松手时才应用，面板不会追着指针跳动；清缓存时间改成 1 到 60 分钟的数字输入框。
 
-1. Download `Pesty-x.y.z.dmg` from the [latest release](https://github.com/momenbasel/pesty/releases/latest).
-2. Open the DMG and drag **Pesty** to **Applications**.
-3. Launch Pesty. It lives in your menu bar.
+### 音效
 
-The build is signed with a Developer ID and notarized by Apple, so it opens without Gatekeeper warnings.
+- **粘贴和复制共用 `Breeze` 音效**：`Breeze` 是 macOS 26 起系统设置的显示名，对应文件 `/System/Library/Sounds/Blow.aiff`。
+- **只保留两个开关**：设置里是「粘贴音效」和「复制音效」。面板里按 ⌘C 复制和在别的 App 里复制被捕获，共用「复制音效」这一个开关。
+- **新增音量滑块**：两种音效共用一个音量，默认 50%，可以在设置里调。
+- **旧设置自动迁移**：老版本的「捕获新内容时播放音效」和「复制时播放音效」会合并，只要其中任意一边是开着的，迁移后就保持开着。
 
-## First run
+### 性能与内存
 
-1. Press **`⌘⇧V`** (the default shortcut) to open the strip.
-2. Pick a clip and press `return`.
-   - **Direct-download / Homebrew build:** the first time you paste, macOS asks for **Accessibility** permission - grant it so Pesty can paste directly into other apps. You can change this anytime in **Settings → Permissions**.
-   - **Mac App Store build:** fully sandboxed and requests **no** permissions - the clip is copied and focus returns to your app, so just press **`⌘V`** to paste.
+- **预览尺寸减半**：卡片预览的最长边从 1024 像素降到 512 像素。卡片只有 215 点宽，512 像素在 2 倍屏上也够清晰。
+- **缓存上限收紧**：预览缓存从 64 MB / 200 张降到 24 MB / 120 张。
+- **延迟清理**：面板收起后过一段时间会清掉已解码的图片缓存，时间可在设置里调（1 到 60 分钟，默认 3 分钟），也可以关掉。
 
-## Keyboard shortcuts
+## 从源码构建
 
-| Key | Action |
-| --- | --- |
-| `⌘⇧V` | Show / hide the strip (configurable) |
-| `⌘⇧S` (with strip open) | Open Settings |
-| `⌘⇧P` (with strip open) | Pause / resume clipboard monitoring |
-| `←` `→` `↑` `↓` | Move selection |
-| `return` | Paste selected clip |
-| `⌘1`–`⌘9` (configurable) | Quick-paste the Nth clip; add the plain-text modifier (default `⇧`) to paste unformatted |
-| `⌫` (search empty) or `⌘⌫` | Delete selected clip |
-| type anything | Search |
-| `esc` | Clear search, then close |
-
-## Build from source
-
-Requires macOS 14+ and Xcode 16+ (Swift 6).
+需要 macOS 14 或更新版本，以及完整安装的 Xcode。SwiftUI 的宏由 Xcode 提供，只装命令行工具时 `swift build` 会报找不到 `SwiftUIMacros`。
 
 ```bash
-git clone https://github.com/momenbasel/pesty.git
+git clone <本仓库地址>
 cd pesty
-swift run            # run in place
-# or build a distributable .app:
-VERSION=1.0.0 BUILD=1 ./scripts/build_app.sh
-open packaging/Pesty.app
+VERSION=1.4.0 BUILD=1 bash scripts/build_app.sh
+open packaging
 ```
 
-To produce a signed + notarized DMG (needs a Developer ID cert and an App Store Connect API key):
+脚本会编译 arm64 和 x86_64 两个架构，做 ad-hoc 签名，产物是 `packaging/Pesty.app`。把它拖进 `/Applications` 就能用。这个构建没有经过 Apple 公证，第一次打开时需要在「系统设置 → 隐私与安全性」里允许。
 
-```bash
-SIGN_IDENTITY="Developer ID Application: Your Name (TEAMID)" \
-ASC_KEY="$HOME/.appstoreconnect/private_keys/AuthKey_XXXX.p8" \
-ASC_KEY_ID="XXXX" ASC_ISSUER="<issuer-uuid>" \
-./scripts/release_build.sh
-```
+首次启动后还需要在「系统设置 → 隐私与安全性 → 设备控制和数据访问」里允许 Pesty，否则它无法把内容粘贴到其他 App。
 
-## Project structure
+## 快捷键
 
-```
-Sources/Pesty/
-  Main.swift            entry point
-  AppController.swift   app delegate, hotkey + menu-bar wiring, paste flow
-  Models/               ClipItem, ClipType, Pinboard
-  Store/                ClipboardStore (history, pinboards, persistence)
-  Monitor/              ClipboardMonitor (pasteboard polling), PasteService (⌘V injection)
-  Hotkey/               HotKeyCenter (Carbon global hotkey)
-  UI/                   BarView, ClipCardView, PinboardTabs, the sliding panel
-  Settings/             Settings store + preferences window + hotkey recorder
-  Util/                 icons, color hex, visual-effect view, launch-at-login
-scripts/                build, icon, sign + notarize
-packaging/              Info.plist, entitlements, generated artifacts
-```
+| 操作 | 默认 |
+| --- | --- |
+| 显示 / 隐藏面板 | ⌘⇧V |
+| 粘贴选中的卡片 | Return |
+| 快速粘贴第 1–9 张卡片 | ⌘1 – ⌘9 |
+| 关闭面板 | Esc |
 
-## Pesty vs other Mac clipboard managers
+热键、快速粘贴修饰键和纯文本粘贴修饰键都可以在设置里修改。
 
-| | Pesty | Paste | Maccy |
-| --- | --- | --- | --- |
-| Price | **Free** (optional one-time fee on the Mac App Store) | Subscription | Free |
-| Open source | **Yes (MIT)** | No | Yes |
-| Color-coded strip UI | Yes | Yes | No (list) |
-| Pinboards | Yes | Yes | No |
-| Source-app color coding | Yes | Yes | No |
-| Native (no Electron) | Yes | Yes | Yes |
-| Signed & notarized | Yes | Yes | Yes |
+## 致谢
 
-Pesty reimplements the parts of Paste people use every day - the slide-up strip, color-coded cards, pinboards, search, and keyboard-driven pasting - as a free, native, open-source app. If you love Paste, [buy it](https://pasteapp.io); it's excellent. Pesty is for people who want a free, hackable **Paste app alternative**, or a prettier alternative to **Maccy** with a strip UI and pinboards.
-
-## FAQ
-
-**Is Pesty free?** Yes - free and open source (MIT) on GitHub and via Homebrew. The Mac App Store build carries a small one-time fee, but that's optional: it only helps cover the yearly Apple Developer Program fee that keeps the app signed and notarized. It's the same app either way.
-
-**Is Pesty a good clipboard manager for Mac?** It keeps a searchable history of everything you copy (text, links, images, files, colors) and pastes it back with a keystroke - with pinboards and a color-coded strip.
-
-**Does it keep my clipboard private?** Yes. Everything stays on your Mac - no servers, no analytics, no network calls - and password-manager clips are ignored.
-
-**What macOS does it need?** macOS 14 (Sonoma) or later, on Apple Silicon or Intel.
-
-> **Keywords:** clipboard manager for Mac, macOS clipboard history, free Paste app alternative, open-source clipboard manager, Maccy alternative, copy-paste history, clipboard pinboards.
-
-🔗 **Website:** [www.moamenbasel.com/pesty](https://www.moamenbasel.com/pesty/)
-
-## Contributing
-
-PRs welcome - see [CONTRIBUTING.md](CONTRIBUTING.md). Good first issues: large preview pane, drag-and-drop out of cards, strip resize handle, iOS/iPad companion, more content-type renderers.
-
-## Also try
-
-[JMacy](https://jmacy.xyz) - the best and fastest downloader for macOS. Multi-connection segmented downloads that saturate your line, plus browser capture and torrents.
-
-## License
-
-[MIT](LICENSE) © 2026 Moamen Basel.
-
-## Disclaimer
-
-Pesty is an independent project and is **not affiliated with, endorsed by, or connected to** Paste or its makers (Wonder Warp / FIPLAB). "Paste" is referenced only to describe the inspiration. All trademarks belong to their respective owners.
+- 上游项目：[momenbasel/pesty](https://github.com/momenbasel/pesty)，MIT 许可。
+- 中文翻译：[henry-ji](https://github.com/henry-ji)（PR #111）。
