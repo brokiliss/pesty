@@ -180,8 +180,12 @@ struct ClipCardView: View {
             Text(item.text ?? "")
                 .font(.system(size: 12.5))
                 .foregroundStyle(Theme.cardTextPrimary.opacity(0.9))
-                .lineLimit(10)
+                // No fixed line limit: the text fills whatever height the padded
+                // box has, and the last visible line is the one that gets the
+                // ellipsis. A fixed ten-line cap cut long clips short while the
+                // lower half of the card was still empty.
                 .multilineTextAlignment(.leading)
+                .truncationMode(.tail)
         }
     }
 
