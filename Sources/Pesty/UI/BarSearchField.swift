@@ -45,6 +45,10 @@ final class BarSearchFieldBridge {
 
 struct NativeBarSearchField: NSViewRepresentable {
     @Binding var text: String
+    /// Passed in rather than looked up here so a language change reaches this
+    /// AppKit field: the value is read while the bar's body renders, which
+    /// makes SwiftUI call updateNSView again.
+    let placeholder: String
     let bridge: BarSearchFieldBridge
     let onBegin: () -> Void
     let onEnd: () -> Void
@@ -88,10 +92,9 @@ struct NativeBarSearchField: NSViewRepresentable {
     private func applyPlaceholder(to field: NSTextField) {
         // Setting the attributed placeholder clears `placeholderString`, so the
         // applied title is read back from the attributed value.
-        let title = "Search".localized
-        guard field.placeholderAttributedString?.string != title else { return }
+        guard field.placeholderAttributedString?.string != placeholder else { return }
         field.placeholderAttributedString = NSAttributedString(
-            string: title,
+            string: placeholder,
             attributes: [.foregroundColor: NSColor.white.withAlphaComponent(0.55)]
         )
     }

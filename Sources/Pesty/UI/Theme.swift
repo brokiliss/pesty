@@ -43,7 +43,13 @@ extension Date {
         case ..<86_400:   return "\(Int(secs / 3600))h"
         case ..<604_800:  return "\(Int(secs / 86_400))d"
         default:
-            return Self.shortDate.string(from: self)
+            // The cards use clipRelativeLong today, so this branch is currently
+            // unreachable, but it should still follow the same language.
+            let locale = Self.appLocale
+            let f = DateFormatter()
+            f.locale = locale
+            f.dateFormat = DateFormatter.dateFormat(fromTemplate: "MMMd", options: 0, locale: locale) ?? "MMM d"
+            return f.string(from: self)
         }
     }
 
@@ -57,16 +63,8 @@ extension Date {
     }
 
     /// Dates follow the language picked inside the app, not the system one: an
-    /// English Mac running the Chinese interface should read 11月8日 and 2 小时前.
+    /// English Mac running the Chinese interface should read 11月8日 and 2小时前.
     private static var appLocale: Locale {
         Locale(identifier: LocalizationManager.shared.language.localeCode)
-    }
-
-    private static var shortDate: DateFormatter {
-        let locale = appLocale
-        let f = DateFormatter()
-        f.locale = locale
-        f.dateFormat = DateFormatter.dateFormat(fromTemplate: "MMMd", options: 0, locale: locale) ?? "MMM d"
-        return f
     }
 }

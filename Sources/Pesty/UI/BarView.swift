@@ -95,6 +95,7 @@ struct BarView: View {
 
             NativeBarSearchField(
                 text: searchTextBinding,
+                placeholder: "Search".localized,
                 bridge: searchBridge,
                 onBegin: { AppController.shared.setBarSearchEditing(true) },
                 onEnd: { AppController.shared.setBarSearchEditing(false) },
