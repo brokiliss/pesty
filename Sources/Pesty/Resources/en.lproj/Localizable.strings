@@ -82,6 +82,7 @@
 "%d pt" = "%d pt";
 "Show resize handle on the Paste Bar" = "Show resize handle on the Paste Bar";
 "Clear the image cache after the bar closes" = "Clear the image cache after the bar closes";
+"Cache delay in minutes" = "Cache delay in minutes";
 "min" = "min";
 "Select a clip to copy it, then press ⌘V to paste it into your app." = "Select a clip to copy it, then press ⌘V to paste it into your app.";
 

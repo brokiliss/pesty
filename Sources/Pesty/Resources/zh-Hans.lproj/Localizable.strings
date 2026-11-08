@@ -83,6 +83,7 @@
 "%d pt" = "%d 磅";
 "Show resize handle on the Paste Bar" = "在粘贴栏上显示调整控件";
 "Clear the image cache after the bar closes" = "面板收起后清空图片缓存";
+"Cache delay in minutes" = "缓存延迟（分钟）";
 "min" = "分钟";
 "Select a clip to copy it, then press ⌘V to paste it into your app." = "选择一条剪贴内容即可复制，然后按 ⌘V 粘贴到你的应用中";
 

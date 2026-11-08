@@ -9,8 +9,9 @@ enum Theme {
     static let fileIconSize: CGFloat = 64
     static let appIconTileSize: CGFloat = 52
     static let appIconSize: CGFloat = 48
-    static let footerHeight: CGFloat = 25
-    static let footerInset: CGFloat = 14
+    static let footerHeight: CGFloat = 24
+    /// Used by the header, the card body and the footer so their text lines up.
+    static let contentInset: CGFloat = 14
 
     static let panelTint = Color.white.opacity(0.10)
     static let cardBody = Color(white: 0.085).opacity(0.94)
@@ -30,7 +31,7 @@ enum Theme {
 
     static let cardTextPrimary = Color.white.opacity(0.92)
     static let cardTextSecondary = Color.white.opacity(0.58)
-    static let cardTextTertiary = Color.white.opacity(0.36)
+    static let cardTextTertiary = Color.white.opacity(0.42)
 
     static let headerText = Color.white
     static let headerSubText = Color.white.opacity(0.78)

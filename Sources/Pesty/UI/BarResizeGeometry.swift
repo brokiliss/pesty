@@ -44,8 +44,10 @@ enum BarResizeGeometry {
         )
     }
 
-    /// The macOS 26 glass surface extends below the panel so its lower corners
-    /// remain clipped. Live resizing must preserve that oversized root view.
+    /// The panel's root view. It used to extend below the panel on macOS 26 to
+    /// keep the glass corners clipped; the rounded panel ends that need, so
+    /// callers pass a zero extension and this stays as the single place that
+    /// would apply one.
     static func presentedContentFrame(
         panelSize: CGSize,
         bottomExtension: CGFloat

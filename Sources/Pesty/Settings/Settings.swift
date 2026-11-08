@@ -463,7 +463,7 @@ final class Settings {
         barHeight = normalizedBarHeight
         showBarResizeHandle = d.bool(forKey: Keys.showBarResizeHandle)
         autoClearImageCache = d.bool(forKey: Keys.autoClearImageCache)
-        imageCachePurgeMinutes = d.integer(forKey: Keys.imageCachePurgeMinutes)
+        imageCachePurgeMinutes = min(60, max(1, d.integer(forKey: Keys.imageCachePurgeMinutes)))
         showMenuBarIcon = d.bool(forKey: Keys.showMenuBarIcon)
         onboarded = d.bool(forKey: Keys.onboarded)
         iCloudSync = d.bool(forKey: Keys.iCloudSync)
@@ -473,12 +473,13 @@ final class Settings {
         selectedClipPosition = SelectedClipPosition(rawValue: d.integer(forKey: Keys.selectedClipPosition)) ?? .center
         isLoaded = true
         // The capture sound used to have its own switch; it now shares the copy
-        // switch. Carry a user's old choice over once, then forget the key.
-        if let legacy = storedValue("playSoundOnCapture") as? Bool,
-           storedValue("playSoundOnCopy") == nil {
-            playSoundOnCopy = legacy
+        // switch. Combine both stored choices so a sound the user had turned on
+        // either way stays on, then forget the old key.
+        if let legacy = storedValue("playSoundOnCapture") as? Bool {
+            let current = storedValue("playSoundOnCopy") as? Bool
+            playSoundOnCopy = (current ?? false) || legacy
+            d.removeObject(forKey: "playSoundOnCapture")
         }
-        d.removeObject(forKey: "playSoundOnCapture")
         if normalizedBarHeight != storedBarHeight {
             d.set(normalizedBarHeight, forKey: Keys.barHeight)
         }

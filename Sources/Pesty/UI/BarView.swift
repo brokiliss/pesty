@@ -57,7 +57,7 @@ struct BarView: View {
     }
 
     private var topBar: some View {
-        ZStack {
+        GeometryReader { proxy in
             HStack(spacing: 14) {
                 #if MAS
                 if settings.cloudKitSync { syncButton }
@@ -65,9 +65,14 @@ struct BarView: View {
                 if settings.iCloudSync { syncButton }
                 #endif
                 searchIndicator
+                // Capped so the controls stay reachable: an uncapped tab strip
+                // would claim the middle of the bar and sit under them.
                 PinboardTabs()
-                    .layoutPriority(1)
-                Spacer(minLength: 8)
+                    .frame(maxWidth: max(180, min(600, proxy.size.width * 0.28)),
+                           alignment: .leading)
+                Spacer(minLength: 10)
+                panelControls
+                Spacer(minLength: 10)
                 if store.multiSelectedIDs.count > 1 {
                     bulkDeleteButton
                 }
@@ -76,11 +81,15 @@ struct BarView: View {
                 }
                 moreMenu
             }
-            panelControls
-                .offset(x: 150)
+            .padding(.horizontal, 18)
+            .frame(width: proxy.size.width, height: proxy.size.height)
         }
-        .padding(.horizontal, 18)
         .frame(height: 56)
+        .onChange(of: store.barPresentationToken) { _, _ in
+            // A drag interrupted by hiding the bar must not leave a stale
+            // reading behind for the next presentation.
+            draftBarHeight = nil
+        }
     }
 
     private var syncButton: some View {
@@ -159,6 +168,8 @@ struct BarView: View {
             .frame(width: 106)
             .controlSize(.small)
             .help("Bar height".localized)
+            .accessibilityLabel("Bar height".localized)
+            .accessibilityValue(L("%d pt", Int(draftBarHeight ?? settings.barHeight)))
 
             Text("\(Int(draftBarHeight ?? settings.barHeight))")
                 .font(.system(size: 10.5, weight: .medium).monospacedDigit())

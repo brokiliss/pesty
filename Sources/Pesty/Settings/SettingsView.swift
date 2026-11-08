@@ -149,12 +149,14 @@ private struct GeneralSettings: View {
                     HStack(spacing: 8) {
                         Image(systemName: "speaker.wave.1")
                             .foregroundStyle(.secondary)
+                            .accessibilityHidden(true)
                         Slider(value: $settings.soundVolume, in: 0...1) { editing in
                             if !editing { FeedbackSound.play() }
                         }
                         .frame(width: 130)
                         Image(systemName: "speaker.wave.3")
                             .foregroundStyle(.secondary)
+                            .accessibilityHidden(true)
                         Text("\(Int((settings.soundVolume * 100).rounded()))%")
                             .monospacedDigit()
                             .foregroundStyle(.secondary)
@@ -173,6 +175,7 @@ private struct GeneralSettings: View {
                         .frame(width: 42)
                         .multilineTextAlignment(.trailing)
                         .disabled(!settings.autoClearImageCache)
+                        .accessibilityLabel("Cache delay in minutes".localized)
                     Text("min".localized)
                         .foregroundStyle(.secondary)
                         .disabled(!settings.autoClearImageCache)

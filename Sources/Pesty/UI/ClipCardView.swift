@@ -9,6 +9,7 @@ struct ClipCardView: View {
 
     @State private var hovering = false
     @State private var preview: NSImage?
+    @Environment(\.displayScale) private var displayScale
     @State private var previewFailed = false
     @State private var fileInfo: ClipPreviewProvider.FileInfo?
     private var store: ClipboardStore { ClipboardStore.shared }
@@ -71,7 +72,7 @@ struct ClipCardView: View {
                 Spacer(minLength: 4)
                 appIconTile
             }
-            .padding(.leading, Theme.footerInset)
+            .padding(.leading, Theme.contentInset)
             .padding(.trailing, 12)
             .padding(.vertical, 8)
         }
@@ -97,7 +98,7 @@ struct ClipCardView: View {
                 Image(nsImage: AppIconProvider.icon(
                     forBundleID: item.sourceBundleID,
                     pointSize: Theme.appIconSize,
-                    scale: NSScreen.main?.backingScaleFactor ?? 2))
+                    scale: displayScale))
                     .resizable()
                     .interpolation(.none)
                     .frame(width: Theme.appIconSize, height: Theme.appIconSize)
@@ -108,10 +109,10 @@ struct ClipCardView: View {
         VStack(alignment: .leading, spacing: 0) {
             content
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-                .padding(.horizontal, showsImage ? 0 : Theme.footerInset)
+                .padding(.horizontal, showsImage ? 0 : Theme.contentInset)
                 .padding(.top, showsImage ? 0 : 11)
             footer
-                .padding(.horizontal, Theme.footerInset)
+                .padding(.horizontal, Theme.contentInset)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Theme.cardBody)
@@ -233,7 +234,7 @@ struct ClipCardView: View {
     private var footerLine: some View {
         HStack(alignment: .center, spacing: 6) {
             Text(metaLeft)
-                .font(.system(size: 10.5))
+                .font(.system(size: 11))
                 .foregroundStyle(Theme.cardTextSecondary)
                 .lineLimit(item.type == .file ? 3 : 1)
                 .multilineTextAlignment(.leading)
@@ -242,9 +243,9 @@ struct ClipCardView: View {
             if index < 9 {
                 HStack(spacing: 3) {
                     Text(settings.quickPasteModifierDisplay)
-                        .font(.system(size: 10.5, weight: .semibold))
+                        .font(.system(size: 11, weight: .semibold))
                     Text("\(index + 1)")
-                        .font(.system(size: 10.5, weight: .semibold))
+                        .font(.system(size: 11, weight: .semibold))
                 }
                 .foregroundStyle(Theme.cardTextTertiary)
             }

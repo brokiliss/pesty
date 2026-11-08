@@ -68,7 +68,9 @@ enum ClipPreviewProvider {
     /// Badge icons stay: they are a few kilobytes each and cost a Finder
     /// round-trip to rebuild.
     static func purgeImages() {
-        purgeLog.debug("purging decoded card images after the bar stayed closed")
+        // .notice rather than .debug: the purge is rare and slow to reproduce,
+        // so it should be visible in a normal log read when memory is investigated.
+        purgeLog.notice("purging decoded card images after the bar stayed closed")
         images.removeAllObjects()
     }
 
