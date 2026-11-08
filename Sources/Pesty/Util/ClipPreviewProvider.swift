@@ -3,9 +3,11 @@ import ImageIO
 import QuickLookThumbnailing
 import UniformTypeIdentifiers
 
-/// Cards are a few hundred points wide, so a full-size screenshot would only
-/// cost memory; previews are decoded no larger than this on their longest side.
-private let maxPreviewPixels = 1024
+/// Cards are 215 points wide, so a full-size screenshot would only cost
+/// memory. At 512 pixels on the longest side a preview still covers a card on
+/// a 2x display with room to spare, and decoding the same picture at 1024
+/// costs about 2.3 times the bytes for no visible gain.
+private let maxPreviewPixels = 512
 
 /// What a card would otherwise read from disk on every render: the picture for
 /// image clips and image files, and the Finder icon for other file clips.
@@ -20,8 +22,11 @@ enum ClipPreviewProvider {
 
     private static let images: NSCache<NSString, NSImage> = {
         let cache = NSCache<NSString, NSImage>()
-        cache.countLimit = 200
-        cache.totalCostLimit = 64 * 1024 * 1024
+        // A 512px card preview costs roughly 0.6 MB, so 24 MB holds about forty
+        // pictures - several screens' worth - while capping what an idle app
+        // keeps decoded. The cache never held more than the bar could show.
+        cache.countLimit = 120
+        cache.totalCostLimit = 24 * 1024 * 1024
         return cache
     }()
 
@@ -50,6 +55,15 @@ enum ClipPreviewProvider {
     static func cachedImage(for item: ClipItem) -> NSImage? {
         guard let key = imageKey(for: item) else { return nil }
         return images.object(forKey: key)
+    }
+
+    /// Drops every decoded card image. The bar is the only thing that shows
+    /// them, so this is safe once it has been closed long enough that no card
+    /// can be on screen; the next presentation decodes what it shows again.
+    /// Badge icons stay: they are a few kilobytes each and cost a Finder
+    /// round-trip to rebuild.
+    static func purgeImages() {
+        images.removeAllObjects()
     }
 
     static func image(for item: ClipItem, scale: CGFloat) async -> NSImage? {

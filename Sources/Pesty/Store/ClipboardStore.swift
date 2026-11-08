@@ -120,7 +120,12 @@ final class ClipboardStore {
         return visibleItems.first(where: { $0.id == id })
     }
 
-    func addCaptured(_ item: ClipItem) {
+    /// Records a captured clip. Returns true only when a new entry was
+    /// inserted: a repeat copy of something already in history is moved to the
+    /// front instead, and callers that react to genuinely new content - the
+    /// capture sound, for one - must not fire for that.
+    @discardableResult
+    func addCaptured(_ item: ClipItem) -> Bool {
         if let idx = history.firstIndex(where: { $0.sameContent(as: item) }) {
             if item.imageFileName != history[idx].imageFileName { deleteImageFile(item) }
             var existing = history.remove(at: idx)
@@ -131,7 +136,7 @@ final class ClipboardStore {
                 selectionAnchorID = existing.id
             }
             scheduleSave()
-            return
+            return false
         }
         history.insert(item, at: 0)
         trimHistory()
@@ -140,6 +145,7 @@ final class ClipboardStore {
             selectionAnchorID = item.id
         }
         scheduleSave()
+        return true
     }
 
     /// A Copy from the Paste Bar is an intentional use of an existing clip.

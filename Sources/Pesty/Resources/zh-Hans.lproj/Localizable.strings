@@ -75,12 +75,14 @@
 "Promote pasted clips to the top of history" = "将已粘贴的内容提升到历史记录顶部";
 "Play sound on paste" = "粘贴时播放音效";
 "Play sound when copying from Pesty" = "从 Pesty 复制时播放音效";
+"Play sound when a new clip is captured" = "捕获新内容时播放音效";
 "Hide Pesty when clicking outside" = "点击面板外时隐藏 Pesty";
 "Launch at login" = "登录时启动";
 "Show Pesty in the menu bar" = "在菜单栏中显示 Pesty";
 "Bar height" = "面板高度";
 "%d pt" = "%d 磅";
 "Show resize handle on the Paste Bar" = "在粘贴栏上显示调整控件";
+"Clear the image cache 3 minutes after the bar closes" = "面板收起 3 分钟后清空图片缓存";
 "Select a clip to copy it, then press ⌘V to paste it into your app." = "选择一条剪贴内容即可复制，然后按 ⌘V 粘贴到你的应用中";
 
 /* Settings – General – Clip Colors */

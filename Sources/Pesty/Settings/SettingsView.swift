@@ -145,6 +145,7 @@ private struct GeneralSettings: View {
                 Toggle("Promote pasted clips to the top of history".localized, isOn: $settings.promoteOnPaste)
                 Toggle("Play sound on paste".localized, isOn: $settings.playSound)
                 Toggle("Play sound when copying from Pesty".localized, isOn: $settings.playSoundOnCopy)
+                Toggle("Play sound when a new clip is captured".localized, isOn: $settings.playSoundOnCapture)
                 Toggle("Hide Pesty when clicking outside".localized, isOn: $settings.hideOnClickOutside)
                 Toggle("Launch at login".localized, isOn: $settings.launchAtLogin)
                 Toggle("Show Pesty in the menu bar".localized, isOn: $settings.showMenuBarIcon)
@@ -153,6 +154,7 @@ private struct GeneralSettings: View {
                     Slider(value: $settings.barHeight, in: 300...720, step: 10)
                 }
                 Toggle("Show resize handle on the Paste Bar".localized, isOn: $settings.showBarResizeHandle)
+                Toggle("Clear the image cache 3 minutes after the bar closes".localized, isOn: $settings.autoClearImageCache)
                 #if MAS
                 Text("Select a clip to copy it, then press ⌘V to paste it into your app.".localized)
                     .font(.caption).foregroundStyle(.secondary)

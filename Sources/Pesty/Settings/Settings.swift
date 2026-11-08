@@ -207,12 +207,14 @@ final class Settings {
         static let pasteDirectly = "pasteDirectly"
         static let playSound = "playSound"
         static let playSoundOnCopy = "playSoundOnCopy"
+        static let playSoundOnCapture = "playSoundOnCapture"
         static let promoteOnPaste = "promoteOnPaste"
         static let ignoreConcealed = "ignoreConcealed"
         static let deletePermanently = "deletePermanently"
         static let ignoredSourceAppBundleIDs = "ignoredSourceAppBundleIDs"
         static let barHeight = "barHeight"
         static let showBarResizeHandle = "showBarResizeHandle"
+        static let autoClearImageCache = "autoClearImageCache"
         static let showMenuBarIcon = "showMenuBarIcon"
         static let onboarded = "onboarded"
         static let iCloudSync = "iCloudSync"
@@ -296,6 +298,14 @@ final class Settings {
         didSet { guard isLoaded else { return }; d.set(playSoundOnCopy, forKey: Keys.playSoundOnCopy) }
     }
 
+    /// A clipboard change made by another app was recorded as a new clip.
+    /// Unlike the two sounds above, this one fires without any action from
+    /// the user inside Pesty, so it is on by default and a single toggle
+    /// silences it completely.
+    var playSoundOnCapture: Bool {
+        didSet { guard isLoaded else { return }; d.set(playSoundOnCapture, forKey: Keys.playSoundOnCapture) }
+    }
+
     /// Pasting a clip moves it to the front of history the way copying it
     /// from the bar does. Off by default: history has always been ordered by
     /// when a clip was copied, and the quick-paste numbers would shift on
@@ -334,6 +344,17 @@ final class Settings {
         didSet {
             guard isLoaded else { return }
             d.set(showBarResizeHandle, forKey: Keys.showBarResizeHandle)
+        }
+    }
+
+    /// Decoded card images stay in memory after the bar closes. Drop them a few
+    /// minutes later so an idle Pesty stops holding tens of megabytes for a
+    /// window nobody is looking at. Off means the cache keeps its contents for
+    /// the life of the process, so reopening the bar never re-decodes.
+    var autoClearImageCache: Bool {
+        didSet {
+            guard isLoaded else { return }
+            d.set(autoClearImageCache, forKey: Keys.autoClearImageCache)
         }
     }
 
@@ -389,12 +410,16 @@ final class Settings {
             // Off by default, matching the paste sound: existing users
             // shouldn't gain a new audible behavior from an update.
             Keys.playSoundOnCopy: false,
+            // On by default: this is the sound that tells the user a copy was
+            // captured at all, so it is the one the feature was asked for.
+            Keys.playSoundOnCapture: true,
             Keys.promoteOnPaste: false,
             Keys.ignoreConcealed: true,
             Keys.deletePermanently: false,
             Keys.ignoredSourceAppBundleIDs: [],
             Keys.barHeight: BarResizeGeometry.defaultHeight,
             Keys.showBarResizeHandle: false,
+            Keys.autoClearImageCache: true,
             Keys.showMenuBarIcon: true,
             Keys.onboarded: false,
             Keys.iCloudSync: false,
@@ -417,6 +442,7 @@ final class Settings {
         pasteDirectly = d.bool(forKey: Keys.pasteDirectly)
         playSound = d.bool(forKey: Keys.playSound)
         playSoundOnCopy = d.bool(forKey: Keys.playSoundOnCopy)
+        playSoundOnCapture = d.bool(forKey: Keys.playSoundOnCapture)
         promoteOnPaste = d.bool(forKey: Keys.promoteOnPaste)
         ignoreConcealed = d.bool(forKey: Keys.ignoreConcealed)
         deletePermanently = d.bool(forKey: Keys.deletePermanently)
@@ -426,6 +452,7 @@ final class Settings {
         let normalizedBarHeight = BarResizeGeometry.normalizedPersistedHeight(storedBarHeight)
         barHeight = normalizedBarHeight
         showBarResizeHandle = d.bool(forKey: Keys.showBarResizeHandle)
+        autoClearImageCache = d.bool(forKey: Keys.autoClearImageCache)
         showMenuBarIcon = d.bool(forKey: Keys.showMenuBarIcon)
         onboarded = d.bool(forKey: Keys.onboarded)
         iCloudSync = d.bool(forKey: Keys.iCloudSync)

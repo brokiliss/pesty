@@ -36,7 +36,11 @@ final class ClipboardMonitor {
         guard !isPaused else { return }
         if current == suppressUntilChangeCount { return }
         guard let item = makeItem() else { return }
-        ClipboardStore.shared.addCaptured(item)
+        // A repeat copy of something already in history is promoted, not
+        // recorded: the sound belongs to genuinely new content only.
+        if ClipboardStore.shared.addCaptured(item), Settings.shared.playSoundOnCapture {
+            CaptureSound.play()
+        }
     }
 
     private func makeItem() -> ClipItem? {

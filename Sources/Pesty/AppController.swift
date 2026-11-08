@@ -26,6 +26,12 @@ final class AppController: NSObject, NSApplicationDelegate, NSWindowDelegate {
 
     var suppressAutoHide = false
 
+    /// How long a closed bar keeps its decoded card images. Long enough that
+    /// reopening right away stays instant, short enough that an idle Pesty
+    /// stops holding the pictures for a window nobody is looking at.
+    private static let imageCachePurgeDelay: TimeInterval = 180
+    private var imageCachePurgeWorkItem: DispatchWorkItem?
+
     /// When the search query last became empty via the keyboard. A bare
     /// Backspace deletes the selected clip, and the keystroke that clears the
     /// query must stay unambiguously separate from the keystroke that deletes.
@@ -284,6 +290,7 @@ final class AppController: NSObject, NSApplicationDelegate, NSWindowDelegate {
         barController?.forceHide()
         stopKeyMonitor()
         HotKeyCenter.shared.reload()
+        scheduleImageCachePurge()
     }
 
     /// Docking, undocking, and resolution changes can leave the bar sized for a screen
@@ -296,9 +303,11 @@ final class AppController: NSObject, NSApplicationDelegate, NSWindowDelegate {
     @objc private func screenParametersChanged() {
         barController?.forceHide()
         stopKeyMonitor()
+        scheduleImageCachePurge()
     }
 
     func showBar() {
+        cancelImageCachePurge()
         let front = NSWorkspace.shared.frontmostApplication
         if let front, !isPesty(front) {
             previousApp = front
@@ -326,6 +335,31 @@ final class AppController: NSObject, NSApplicationDelegate, NSWindowDelegate {
     func hideBar() {
         stopKeyMonitor()
         barController?.hide()
+        scheduleImageCachePurge()
+    }
+
+    /// Starts the timer that drops decoded card images once the bar has been
+    /// closed for a few minutes. Every hide restarts it, and showing the bar
+    /// cancels it, so the cache is only cleared while nothing can be reading
+    /// it. The setting is re-checked when the timer fires: turning the option
+    /// off after a hide must not clear the cache anyway.
+    private func scheduleImageCachePurge() {
+        imageCachePurgeWorkItem?.cancel()
+        imageCachePurgeWorkItem = nil
+        guard Settings.shared.autoClearImageCache else { return }
+        let work = DispatchWorkItem {
+            MainActor.assumeIsolated {
+                guard Settings.shared.autoClearImageCache else { return }
+                ClipPreviewProvider.purgeImages()
+            }
+        }
+        imageCachePurgeWorkItem = work
+        DispatchQueue.main.asyncAfter(deadline: .now() + Self.imageCachePurgeDelay, execute: work)
+    }
+
+    private func cancelImageCachePurge() {
+        imageCachePurgeWorkItem?.cancel()
+        imageCachePurgeWorkItem = nil
     }
 
     func setBarSearchEditing(_ editing: Bool) {
