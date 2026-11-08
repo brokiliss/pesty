@@ -68,7 +68,7 @@ struct BarView: View {
                 // Capped so the controls stay reachable: an uncapped tab strip
                 // would claim the middle of the bar and sit under them.
                 PinboardTabs()
-                    .frame(maxWidth: max(180, min(600, proxy.size.width * 0.28)),
+                    .frame(maxWidth: max(160, min(430, proxy.size.width * 0.2)),
                            alignment: .leading)
                 Spacer(minLength: 10)
                 panelControls
@@ -155,13 +155,14 @@ struct BarView: View {
             Slider(
                 value: Binding(get: { draftBarHeight ?? settings.barHeight },
                                set: { draftBarHeight = $0 }),
-                in: BarResizeGeometry.minimumHeight...BarResizeGeometry.maximumHeight,
-                step: 10
+                in: BarResizeGeometry.minimumHeight...BarResizeGeometry.maximumHeight
             ) { editing in
                 if editing {
                     draftBarHeight = settings.barHeight
                 } else if let draft = draftBarHeight {
-                    AppController.shared.setBarHeight(draft)
+                    // The track is continuous, so the stored height is rounded
+                    // once on release instead of snapping under the pointer.
+                    AppController.shared.setBarHeight(draft.rounded())
                     draftBarHeight = nil
                 }
             }
@@ -169,9 +170,9 @@ struct BarView: View {
             .controlSize(.small)
             .help("Bar height".localized)
             .accessibilityLabel("Bar height".localized)
-            .accessibilityValue(L("%d pt", Int(draftBarHeight ?? settings.barHeight)))
+            .accessibilityValue(L("%d pt", Int((draftBarHeight ?? settings.barHeight).rounded())))
 
-            Text("\(Int(draftBarHeight ?? settings.barHeight))")
+            Text("\(Int((draftBarHeight ?? settings.barHeight).rounded()))")
                 .font(.system(size: 10.5, weight: .medium).monospacedDigit())
                 .foregroundStyle(Theme.chromeTextSecondary)
                 .frame(width: 24, alignment: .trailing)

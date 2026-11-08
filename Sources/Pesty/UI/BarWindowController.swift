@@ -145,7 +145,13 @@ final class BarWindowController: NSWindowController, NSWindowDelegate {
         guard let panel = window else { return }
         guard let screen = Self.targetScreen() else { return }
         panel.level = Settings.shared.hideOnClickOutside ? .modalPanel : .floating
-        let vf = screen.visibleFrame
+        // The bar floats symmetrically on the display, so its width comes from
+        // the full screen frame; only the vertical extent follows visibleFrame,
+        // which excludes the menu bar and the Dock. Stage Manager's side strip
+        // otherwise makes the left margin look wider than the right one.
+        let visible = screen.visibleFrame
+        let vf = CGRect(x: screen.frame.minX, y: visible.minY,
+                        width: screen.frame.width, height: visible.height)
         let onScreen = BarResizeGeometry.panelFrame(
             for: Settings.shared.barHeight,
             in: vf
