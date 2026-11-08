@@ -49,10 +49,9 @@ final class BarWindowController: NSWindowController, NSWindowDelegate {
     private static let showDuration: TimeInterval = 0.22
     private static let hideDuration: TimeInterval = 0.16
 
-    private static var contentBottomExtension: CGFloat {
-        if #available(macOS 26.0, *) { return Theme.cornerRadius }
-        return 0
-    }
+    /// The panel now floats above the bottom edge with all four corners
+    /// rounded, so nothing has to hang below it any more.
+    private static var contentBottomExtension: CGFloat { 0 }
 
     init() {
         let panel = BarPanel(
@@ -80,8 +79,7 @@ final class BarWindowController: NSWindowController, NSWindowDelegate {
                 content.leadingAnchor.constraint(equalTo: glassContent.leadingAnchor),
                 content.trailingAnchor.constraint(equalTo: glassContent.trailingAnchor),
                 content.topAnchor.constraint(equalTo: glassContent.topAnchor),
-                content.bottomAnchor.constraint(equalTo: glassContent.bottomAnchor,
-                                                constant: -Theme.cornerRadius),
+                content.bottomAnchor.constraint(equalTo: glassContent.bottomAnchor),
             ])
 
             let glass = NSGlassEffectView()
@@ -90,7 +88,7 @@ final class BarWindowController: NSWindowController, NSWindowDelegate {
             glass.tintColor = NSColor.black.withAlphaComponent(0.12)
             glass.style = .regular
             panel.contentView = glass
-            panel.hasShadow = false
+            panel.hasShadow = true
         } else {
             panel.contentView = content
         }
@@ -279,6 +277,13 @@ final class BarWindowController: NSWindowController, NSWindowDelegate {
         self.resizeSession = nil
         guard phase == .shown else { return }
         applyResizeFrame(resizeSession.cancelledFrame)
+    }
+
+    /// Resizes the open bar to a height chosen elsewhere, such as the slider in
+    /// the top strip. The panel frame stays the source of truth.
+    func applyHeight(_ height: Double) {
+        guard phase == .shown, let visibleFrame = targetVisibleFrame else { return }
+        applyResizeFrame(BarResizeGeometry.panelFrame(for: height, in: visibleFrame))
     }
 
     func adjustBarHeight(by delta: CGFloat) {

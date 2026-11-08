@@ -26,10 +26,12 @@ final class AppController: NSObject, NSApplicationDelegate, NSWindowDelegate {
 
     var suppressAutoHide = false
 
-    /// How long a closed bar keeps its decoded card images. Long enough that
-    /// reopening right away stays instant, short enough that an idle Pesty
-    /// stops holding the pictures for a window nobody is looking at.
-    private static let imageCachePurgeDelay: TimeInterval = 180
+    /// How long a closed bar keeps its decoded card images, from the setting.
+    /// Long enough that reopening right away stays instant, short enough that
+    /// an idle Pesty stops holding the pictures nobody is looking at.
+    private var imageCachePurgeDelay: TimeInterval {
+        TimeInterval(Settings.shared.imageCachePurgeMinutes * 60)
+    }
     private var imageCachePurgeWorkItem: DispatchWorkItem?
 
     /// When the search query last became empty via the keyboard. A bare
@@ -374,7 +376,15 @@ final class AppController: NSObject, NSApplicationDelegate, NSWindowDelegate {
             }
         }
         imageCachePurgeWorkItem = work
-        DispatchQueue.main.asyncAfter(deadline: .now() + Self.imageCachePurgeDelay, execute: work)
+        DispatchQueue.main.asyncAfter(deadline: .now() + imageCachePurgeDelay, execute: work)
+    }
+
+    /// Applies a height chosen from the slider in the bar's top strip. The
+    /// bar is the only place that owns the panel frame, so the resize goes
+    /// through the same path as a drag.
+    func setBarHeight(_ height: Double) {
+        Settings.shared.barHeight = height
+        barController?.applyHeight(height)
     }
 
     private func cancelImageCachePurge() {
@@ -467,8 +477,9 @@ final class AppController: NSObject, NSApplicationDelegate, NSWindowDelegate {
             store.promoteCopiedItem(item)
             copyToast.show()
         }
-        // Tink, not Pop: copy and paste stay audibly distinct.
-        if Settings.shared.playSoundOnCopy { NSSound(named: "Tink")?.play() }
+        // Sharing one sound with the capture path: both mean "a clip reached
+        // the clipboard", so they do not need different timbres.
+        if Settings.shared.playSoundOnCopy { FeedbackSound.play() }
         hideBar()
     }
 

@@ -144,17 +144,39 @@ private struct GeneralSettings: View {
                 Toggle("Ignore passwords (concealed clips)".localized, isOn: $settings.ignoreConcealed)
                 Toggle("Promote pasted clips to the top of history".localized, isOn: $settings.promoteOnPaste)
                 Toggle("Play sound on paste".localized, isOn: $settings.playSound)
-                Toggle("Play sound when copying from Pesty".localized, isOn: $settings.playSoundOnCopy)
-                Toggle("Play sound when a new clip is captured".localized, isOn: $settings.playSoundOnCapture)
+                Toggle("Play sound when a clip is copied".localized, isOn: $settings.playSoundOnCopy)
+                LabeledContent("Sound volume".localized) {
+                    HStack(spacing: 8) {
+                        Image(systemName: "speaker.wave.1")
+                            .foregroundStyle(.secondary)
+                        Slider(value: $settings.soundVolume, in: 0...1) { editing in
+                            if !editing { FeedbackSound.play() }
+                        }
+                        .frame(width: 130)
+                        Image(systemName: "speaker.wave.3")
+                            .foregroundStyle(.secondary)
+                        Text("\(Int((settings.soundVolume * 100).rounded()))%")
+                            .monospacedDigit()
+                            .foregroundStyle(.secondary)
+                            .frame(width: 36, alignment: .trailing)
+                    }
+                }
+                .disabled(!settings.playSound && !settings.playSoundOnCopy)
                 Toggle("Hide Pesty when clicking outside".localized, isOn: $settings.hideOnClickOutside)
                 Toggle("Launch at login".localized, isOn: $settings.launchAtLogin)
                 Toggle("Show Pesty in the menu bar".localized, isOn: $settings.showMenuBarIcon)
-                VStack(alignment: .leading) {
-                    LabeledContent("Bar height".localized, value: L("%d pt", Int(settings.barHeight)))
-                    Slider(value: $settings.barHeight, in: 300...720, step: 10)
+                HStack {
+                    Toggle("Clear the image cache after the bar closes".localized,
+                           isOn: $settings.autoClearImageCache)
+                    Spacer()
+                    TextField("", value: $settings.imageCachePurgeMinutes, format: .number)
+                        .frame(width: 42)
+                        .multilineTextAlignment(.trailing)
+                        .disabled(!settings.autoClearImageCache)
+                    Text("min".localized)
+                        .foregroundStyle(.secondary)
+                        .disabled(!settings.autoClearImageCache)
                 }
-                Toggle("Show resize handle on the Paste Bar".localized, isOn: $settings.showBarResizeHandle)
-                Toggle("Clear the image cache 3 minutes after the bar closes".localized, isOn: $settings.autoClearImageCache)
                 #if MAS
                 Text("Select a clip to copy it, then press ⌘V to paste it into your app.".localized)
                     .font(.caption).foregroundStyle(.secondary)

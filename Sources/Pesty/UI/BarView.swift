@@ -4,6 +4,7 @@ struct BarView: View {
     let searchBridge: BarSearchFieldBridge
     @Bindable private var store = ClipboardStore.shared
     @Bindable private var settings = Settings.shared
+    @State private var draftBarHeight: Double?
 
     private var searchIsActive: Bool {
         store.barInputMode == .search || !store.searchText.isEmpty
@@ -37,7 +38,11 @@ struct BarView: View {
                     onAccessibilityAdjustment: AppController.shared.adjustBarHeight)
             }
         }
-        .clipShape(RoundedCorners(radius: Theme.cornerRadius, corners: [.topLeft, .topRight]))
+        .clipShape(RoundedRectangle(cornerRadius: Theme.cornerRadius, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: Theme.cornerRadius, style: .continuous)
+                .strokeBorder(Color.white.opacity(0.10))
+        )
         .ignoresSafeArea()
     }
 
@@ -52,23 +57,27 @@ struct BarView: View {
     }
 
     private var topBar: some View {
-        HStack(spacing: 14) {
-            #if MAS
-            if settings.cloudKitSync { syncButton }
-            #else
-            if settings.iCloudSync { syncButton }
-            #endif
-            searchIndicator
-            PinboardTabs()
-                .layoutPriority(1)
-            Spacer(minLength: 8)
-            if store.multiSelectedIDs.count > 1 {
-                bulkDeleteButton
+        ZStack {
+            HStack(spacing: 14) {
+                #if MAS
+                if settings.cloudKitSync { syncButton }
+                #else
+                if settings.iCloudSync { syncButton }
+                #endif
+                searchIndicator
+                PinboardTabs()
+                    .layoutPriority(1)
+                Spacer(minLength: 8)
+                if store.multiSelectedIDs.count > 1 {
+                    bulkDeleteButton
+                }
+                if store.hasUndoableDeletion {
+                    undoButton
+                }
+                moreMenu
             }
-            if store.hasUndoableDeletion {
-                undoButton
-            }
-            moreMenu
+            panelControls
+                .offset(x: 150)
         }
         .padding(.horizontal, 18)
         .frame(height: 56)
@@ -127,6 +136,58 @@ struct BarView: View {
         .background(searchIsActive ? Theme.fieldBG : Color.clear, in: Capsule())
         .layoutPriority(searchIsActive ? 2 : 0)
         .animation(.easeOut(duration: 0.15), value: searchIsActive)
+    }
+
+    /// Panel height and the resize-handle switch live in the empty part of the
+    /// top bar instead of a submenu. The slider only writes the new height when
+    /// the drag ends, so the panel does not chase the pointer.
+    private var panelControls: some View {
+        HStack(spacing: 9) {
+            Slider(
+                value: Binding(get: { draftBarHeight ?? settings.barHeight },
+                               set: { draftBarHeight = $0 }),
+                in: BarResizeGeometry.minimumHeight...BarResizeGeometry.maximumHeight,
+                step: 10
+            ) { editing in
+                if editing {
+                    draftBarHeight = settings.barHeight
+                } else if let draft = draftBarHeight {
+                    AppController.shared.setBarHeight(draft)
+                    draftBarHeight = nil
+                }
+            }
+            .frame(width: 106)
+            .controlSize(.small)
+            .help("Bar height".localized)
+
+            Text("\(Int(draftBarHeight ?? settings.barHeight))")
+                .font(.system(size: 10.5, weight: .medium).monospacedDigit())
+                .foregroundStyle(Theme.chromeTextSecondary)
+                .frame(width: 24, alignment: .trailing)
+
+            Rectangle()
+                .fill(Color.white.opacity(0.12))
+                .frame(width: 1, height: 14)
+
+            Button {
+                settings.showBarResizeHandle.toggle()
+            } label: {
+                Image(systemName: settings.showBarResizeHandle
+                      ? "arrow.up.and.down.square.fill"
+                      : "arrow.up.and.down.square")
+                    .font(.system(size: 13))
+                    .foregroundStyle(settings.showBarResizeHandle
+                                     ? Theme.selection : Theme.chromeTextTertiary)
+                    .frame(width: 18)
+            }
+            .buttonStyle(.plain)
+            .help("Show resize handle on the Paste Bar".localized)
+            .accessibilityLabel("Show resize handle on the Paste Bar".localized)
+        }
+        .padding(.horizontal, 11)
+        .frame(height: 30)
+        .background(Theme.fieldBG, in: Capsule())
+        .overlay(Capsule().strokeBorder(Color.white.opacity(0.07)))
     }
 
     private var bulkDeleteButton: some View {
@@ -247,40 +308,4 @@ struct BarView: View {
                 .foregroundStyle(Theme.chromeTextSecondary)
         }
     }
-}
-
-struct RoundedCorners: Shape {
-    var radius: CGFloat
-    var corners: RectCorner
-
-    func path(in rect: CGRect) -> Path {
-        var p = Path()
-        let tl = corners.contains(.topLeft) ? radius : 0
-        let tr = corners.contains(.topRight) ? radius : 0
-        let bl = corners.contains(.bottomLeft) ? radius : 0
-        let br = corners.contains(.bottomRight) ? radius : 0
-        p.move(to: CGPoint(x: rect.minX + tl, y: rect.minY))
-        p.addLine(to: CGPoint(x: rect.maxX - tr, y: rect.minY))
-        p.addArc(center: CGPoint(x: rect.maxX - tr, y: rect.minY + tr), radius: tr,
-                 startAngle: .degrees(-90), endAngle: .degrees(0), clockwise: false)
-        p.addLine(to: CGPoint(x: rect.maxX, y: rect.maxY - br))
-        p.addArc(center: CGPoint(x: rect.maxX - br, y: rect.maxY - br), radius: br,
-                 startAngle: .degrees(0), endAngle: .degrees(90), clockwise: false)
-        p.addLine(to: CGPoint(x: rect.minX + bl, y: rect.maxY))
-        p.addArc(center: CGPoint(x: rect.minX + bl, y: rect.maxY - bl), radius: bl,
-                 startAngle: .degrees(90), endAngle: .degrees(180), clockwise: false)
-        p.addLine(to: CGPoint(x: rect.minX, y: rect.minY + tl))
-        p.addArc(center: CGPoint(x: rect.minX + tl, y: rect.minY + tl), radius: tl,
-                 startAngle: .degrees(180), endAngle: .degrees(270), clockwise: false)
-        p.closeSubpath()
-        return p
-    }
-}
-
-struct RectCorner: OptionSet {
-    let rawValue: Int
-    static let topLeft = RectCorner(rawValue: 1 << 0)
-    static let topRight = RectCorner(rawValue: 1 << 1)
-    static let bottomLeft = RectCorner(rawValue: 1 << 2)
-    static let bottomRight = RectCorner(rawValue: 1 << 3)
 }

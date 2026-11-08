@@ -7,6 +7,12 @@ enum BarResizeGeometry {
     static let minimumHeight = 300.0
     static let maximumHeight = 720.0
 
+    /// The bar floats instead of touching the screen edges: 32 pt at the sides
+    /// and 28 pt above the Dock area, close to one card gap so the frame reads
+    /// as a deliberate shelf rather than a cut-off panel.
+    static let sideInset: CGFloat = 32
+    static let bottomInset: CGFloat = 28
+
     /// Returns a value which is safe to persist independently of the display
     /// the bar happens to be shown on.
     static func normalizedPersistedHeight(_ height: Double) -> Double {
@@ -20,20 +26,20 @@ enum BarResizeGeometry {
         for requestedHeight: Double,
         in visibleFrame: CGRect
     ) -> CGFloat {
-        let displayHeight = visibleFrame.height
-        guard displayHeight.isFinite, displayHeight > 0 else { return 0 }
-        return min(CGFloat(normalizedPersistedHeight(requestedHeight)), displayHeight)
+        let available = visibleFrame.height - bottomInset
+        guard available.isFinite, available > 0 else { return 0 }
+        return min(CGFloat(normalizedPersistedHeight(requestedHeight)), available)
     }
 
-    /// Produces the complete bottom-docked panel frame for a target display.
+    /// Produces the complete floating panel frame for a target display.
     static func panelFrame(
         for requestedHeight: Double,
         in visibleFrame: CGRect
     ) -> CGRect {
         CGRect(
-            x: visibleFrame.minX,
-            y: visibleFrame.minY,
-            width: visibleFrame.width,
+            x: visibleFrame.minX + sideInset,
+            y: visibleFrame.minY + bottomInset,
+            width: max(0, visibleFrame.width - sideInset * 2),
             height: effectiveHeight(for: requestedHeight, in: visibleFrame)
         )
     }
@@ -88,11 +94,9 @@ struct BarResizeSession: Equatable {
     }
 
     func frame(atScreenY screenY: CGFloat) -> CGRect {
-        CGRect(
-            x: visibleFrame.minX,
-            y: visibleFrame.minY,
-            width: visibleFrame.width,
-            height: height(atScreenY: screenY)
+        BarResizeGeometry.panelFrame(
+            for: Double(height(atScreenY: screenY)),
+            in: visibleFrame
         )
     }
 
@@ -106,11 +110,9 @@ struct BarResizeSession: Equatable {
     var cancelledHeight: CGFloat { initialPanelHeight }
 
     var cancelledFrame: CGRect {
-        CGRect(
-            x: visibleFrame.minX,
-            y: visibleFrame.minY,
-            width: visibleFrame.width,
-            height: initialPanelHeight
+        BarResizeGeometry.panelFrame(
+            for: Double(initialPanelHeight),
+            in: visibleFrame
         )
     }
 }

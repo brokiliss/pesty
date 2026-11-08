@@ -207,7 +207,8 @@ final class Settings {
         static let pasteDirectly = "pasteDirectly"
         static let playSound = "playSound"
         static let playSoundOnCopy = "playSoundOnCopy"
-        static let playSoundOnCapture = "playSoundOnCapture"
+        static let soundVolume = "soundVolume"
+        static let imageCachePurgeMinutes = "imageCachePurgeMinutes"
         static let promoteOnPaste = "promoteOnPaste"
         static let ignoreConcealed = "ignoreConcealed"
         static let deletePermanently = "deletePermanently"
@@ -293,16 +294,21 @@ final class Settings {
         didSet { guard isLoaded else { return }; d.set(playSound, forKey: Keys.playSound) }
     }
 
+    /// Covers both ways a clip reaches the clipboard: copying it from the bar
+    /// and capturing a copy made in another app. They share one sound and one
+    /// switch, because both mean the same thing to the user.
     var playSoundOnCopy: Bool {
         didSet { guard isLoaded else { return }; d.set(playSoundOnCopy, forKey: Keys.playSoundOnCopy) }
     }
 
-    /// A clipboard change made by another app was recorded as a new clip.
-    /// Unlike the two sounds above, this one fires without any action from
-    /// the user inside Pesty, so it is on by default and a single toggle
-    /// silences it completely.
-    var playSoundOnCapture: Bool {
-        didSet { guard isLoaded else { return }; d.set(playSoundOnCapture, forKey: Keys.playSoundOnCapture) }
+    /// Playback level for both sounds, 0 through 1.
+    var soundVolume: Double {
+        didSet {
+            guard isLoaded else { return }
+            let clamped = min(1, max(0, soundVolume))
+            if clamped != soundVolume { soundVolume = clamped; return }
+            d.set(soundVolume, forKey: Keys.soundVolume)
+        }
     }
 
     /// Pasting a clip moves it to the front of history the way copying it
@@ -357,6 +363,17 @@ final class Settings {
         }
     }
 
+    /// How long the bar stays closed before the decoded card images are dropped.
+    /// The default matches the old fixed three minutes.
+    var imageCachePurgeMinutes: Int {
+        didSet {
+            guard isLoaded else { return }
+            let clamped = min(60, max(1, imageCachePurgeMinutes))
+            if clamped != imageCachePurgeMinutes { imageCachePurgeMinutes = clamped; return }
+            d.set(imageCachePurgeMinutes, forKey: Keys.imageCachePurgeMinutes)
+        }
+    }
+
     var showMenuBarIcon: Bool {
         didSet {
             guard isLoaded else { return }
@@ -402,12 +419,10 @@ final class Settings {
             Keys.hideOnClickOutside: true,
             Keys.pasteDirectly: true,
             Keys.playSound: false,
-            // Off by default, matching the paste sound: existing users
-            // shouldn't gain a new audible behavior from an update.
-            Keys.playSoundOnCopy: false,
             // On by default: this is the sound that tells the user a copy was
-            // captured at all, so it is the one the feature was asked for.
-            Keys.playSoundOnCapture: true,
+            // recorded at all, so it is the one the feature was asked for.
+            Keys.playSoundOnCopy: true,
+            Keys.soundVolume: 0.5,
             Keys.promoteOnPaste: false,
             Keys.ignoreConcealed: true,
             Keys.deletePermanently: false,
@@ -415,6 +430,7 @@ final class Settings {
             Keys.barHeight: BarResizeGeometry.defaultHeight,
             Keys.showBarResizeHandle: false,
             Keys.autoClearImageCache: true,
+            Keys.imageCachePurgeMinutes: 3,
             Keys.showMenuBarIcon: true,
             Keys.onboarded: false,
             Keys.iCloudSync: false,
@@ -436,7 +452,7 @@ final class Settings {
         pasteDirectly = d.bool(forKey: Keys.pasteDirectly)
         playSound = d.bool(forKey: Keys.playSound)
         playSoundOnCopy = d.bool(forKey: Keys.playSoundOnCopy)
-        playSoundOnCapture = d.bool(forKey: Keys.playSoundOnCapture)
+        soundVolume = d.double(forKey: Keys.soundVolume)
         promoteOnPaste = d.bool(forKey: Keys.promoteOnPaste)
         ignoreConcealed = d.bool(forKey: Keys.ignoreConcealed)
         deletePermanently = d.bool(forKey: Keys.deletePermanently)
@@ -447,6 +463,7 @@ final class Settings {
         barHeight = normalizedBarHeight
         showBarResizeHandle = d.bool(forKey: Keys.showBarResizeHandle)
         autoClearImageCache = d.bool(forKey: Keys.autoClearImageCache)
+        imageCachePurgeMinutes = d.integer(forKey: Keys.imageCachePurgeMinutes)
         showMenuBarIcon = d.bool(forKey: Keys.showMenuBarIcon)
         onboarded = d.bool(forKey: Keys.onboarded)
         iCloudSync = d.bool(forKey: Keys.iCloudSync)
@@ -455,9 +472,22 @@ final class Settings {
         clipColorAccentHex = d.string(forKey: Keys.clipColorAccentHex) ?? "#FF5A9F"
         selectedClipPosition = SelectedClipPosition(rawValue: d.integer(forKey: Keys.selectedClipPosition)) ?? .center
         isLoaded = true
+        // The capture sound used to have its own switch; it now shares the copy
+        // switch. Carry a user's old choice over once, then forget the key.
+        if let legacy = storedValue("playSoundOnCapture") as? Bool,
+           storedValue("playSoundOnCopy") == nil {
+            playSoundOnCopy = legacy
+        }
+        d.removeObject(forKey: "playSoundOnCapture")
         if normalizedBarHeight != storedBarHeight {
             d.set(normalizedBarHeight, forKey: Keys.barHeight)
         }
+    }
+
+    /// The value written by the app itself, without registered defaults. Used
+    /// once to migrate a preference whose key changed shape.
+    private func storedValue(_ key: String) -> Any? {
+        d.persistentDomain(forName: Bundle.main.bundleIdentifier ?? "")?[key]
     }
 
     var hotkeyDisplay: String {

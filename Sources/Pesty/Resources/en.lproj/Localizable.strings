@@ -73,15 +73,16 @@
 "Ignore passwords (concealed clips)" = "Ignore passwords (concealed clips)";
 "Promote pasted clips to the top of history" = "Promote pasted clips to the top of history";
 "Play sound on paste" = "Play sound on paste";
-"Play sound when copying from Pesty" = "Play sound when copying from Pesty";
-"Play sound when a new clip is captured" = "Play sound when a new clip is captured";
+"Play sound when a clip is copied" = "Play sound when a clip is copied";
+"Sound volume" = "Sound volume";
 "Hide Pesty when clicking outside" = "Hide Pesty when clicking outside";
 "Launch at login" = "Launch at login";
 "Show Pesty in the menu bar" = "Show Pesty in the menu bar";
 "Bar height" = "Bar height";
 "%d pt" = "%d pt";
 "Show resize handle on the Paste Bar" = "Show resize handle on the Paste Bar";
-"Clear the image cache 3 minutes after the bar closes" = "Clear the image cache 3 minutes after the bar closes";
+"Clear the image cache after the bar closes" = "Clear the image cache after the bar closes";
+"min" = "min";
 "Select a clip to copy it, then press ⌘V to paste it into your app." = "Select a clip to copy it, then press ⌘V to paste it into your app.";
 
 /* Settings – General – Clip Colors */

@@ -3,14 +3,21 @@ import SwiftUI
 enum Theme {
     static let cardWidth: CGFloat = 215
     static let cardSpacing: CGFloat = 28
-    static let cornerRadius: CGFloat = 16
+    static let cornerRadius: CGFloat = 22
     static let cardCorner: CGFloat = 19
     static let headerHeight: CGFloat = 68
     static let fileIconSize: CGFloat = 64
+    static let appIconTileSize: CGFloat = 52
+    static let appIconSize: CGFloat = 48
+    static let footerHeight: CGFloat = 25
+    static let footerInset: CGFloat = 14
 
     static let panelTint = Color.white.opacity(0.10)
-    static let cardBody = Color.white.opacity(0.94)
-    static let cardBorder = Color.black.opacity(0.12)
+    static let cardBody = Color(white: 0.085).opacity(0.94)
+    static let cardBorder = Color.white.opacity(0.10)
+    /// The plate behind an image. Slightly darker than the card body so the
+    /// picture's own edges stay legible without a checkerboard.
+    static let imagePlate = Color.black.opacity(0.30)
     static let selection = Color(red: 0.0, green: 0.478, blue: 1.0)
     static let selectedCardRing: CGFloat = 6
     // Leave 43 pt beyond the selected-card ring at either strip edge while
@@ -21,9 +28,9 @@ enum Theme {
     static let chromeTextSecondary = Color.white.opacity(0.55)
     static let chromeTextTertiary = Color.white.opacity(0.34)
 
-    static let cardTextPrimary = Color.black.opacity(0.82)
-    static let cardTextSecondary = Color.black.opacity(0.52)
-    static let cardTextTertiary = Color.black.opacity(0.34)
+    static let cardTextPrimary = Color.white.opacity(0.92)
+    static let cardTextSecondary = Color.white.opacity(0.58)
+    static let cardTextTertiary = Color.white.opacity(0.36)
 
     static let headerText = Color.white
     static let headerSubText = Color.white.opacity(0.78)

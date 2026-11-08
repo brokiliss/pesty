@@ -38,8 +38,8 @@ final class ClipboardMonitor {
         guard let item = makeItem() else { return }
         // A repeat copy of something already in history is promoted, not
         // recorded: the sound belongs to genuinely new content only.
-        if ClipboardStore.shared.addCaptured(item), Settings.shared.playSoundOnCapture {
-            CaptureSound.play()
+        if ClipboardStore.shared.addCaptured(item), Settings.shared.playSoundOnCopy {
+            FeedbackSound.play()
         }
     }
 

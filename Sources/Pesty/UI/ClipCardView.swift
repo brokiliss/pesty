@@ -66,11 +66,14 @@ struct ClipCardView: View {
                         .foregroundStyle(Theme.headerSubText)
                 }
                 .lineLimit(1)
+                // Same 14 pt from the left edge and the top edge.
+                .padding(.top, 6)
                 Spacer(minLength: 4)
                 appIconTile
             }
-            .padding(.horizontal, 13)
-            .padding(.vertical, 7)
+            .padding(.leading, Theme.footerInset)
+            .padding(.trailing, 12)
+            .padding(.vertical, 8)
         }
         .frame(height: Theme.headerHeight)
     }
@@ -81,18 +84,23 @@ struct ClipCardView: View {
     }
 
     private var appIconTile: some View {
-        RoundedRectangle(cornerRadius: 15, style: .continuous)
-            .fill(Color.white.opacity(0.14))
+        // The tile's corner matches the card's, and only two points of the
+        // tile stay visible around the icon: less padding, bigger icon.
+        RoundedRectangle(cornerRadius: Theme.cardCorner, style: .continuous)
+            .fill(Color.white.opacity(0.10))
             .overlay(
-                RoundedRectangle(cornerRadius: 15, style: .continuous)
-                    .strokeBorder(Color.white.opacity(0.14))
+                RoundedRectangle(cornerRadius: Theme.cardCorner, style: .continuous)
+                    .strokeBorder(Color.white.opacity(0.10))
             )
-            .frame(width: 56, height: 56)
+            .frame(width: Theme.appIconTileSize, height: Theme.appIconTileSize)
             .overlay(
-                Image(nsImage: AppIconProvider.icon(forBundleID: item.sourceBundleID))
+                Image(nsImage: AppIconProvider.icon(
+                    forBundleID: item.sourceBundleID,
+                    pointSize: Theme.appIconSize,
+                    scale: NSScreen.main?.backingScaleFactor ?? 2))
                     .resizable()
-                    .interpolation(.high)
-                    .frame(width: 48, height: 48)
+                    .interpolation(.none)
+                    .frame(width: Theme.appIconSize, height: Theme.appIconSize)
             )
     }
 
@@ -100,11 +108,10 @@ struct ClipCardView: View {
         VStack(alignment: .leading, spacing: 0) {
             content
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-                .padding(.horizontal, showsImage ? 0 : 13)
+                .padding(.horizontal, showsImage ? 0 : Theme.footerInset)
                 .padding(.top, showsImage ? 0 : 11)
             footer
-                .padding(.horizontal, 13)
-                .padding(.bottom, 10)
+                .padding(.horizontal, Theme.footerInset)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Theme.cardBody)
@@ -152,7 +159,7 @@ struct ClipCardView: View {
 
     private var imageCanvas: some View {
         ZStack {
-            CheckerboardBackground()
+            Theme.imagePlate
             if let image = preview ?? ClipPreviewProvider.cachedImage(for: item) {
                 Image(nsImage: image)
                     .resizable().interpolation(.medium).scaledToFit()
@@ -214,29 +221,34 @@ struct ClipCardView: View {
         VStack(alignment: .leading, spacing: 3) {
             if item.type == .link {
                 Text(item.displayTitle)
-                    .font(.system(size: 12, weight: .semibold))
+                    .font(.system(size: 11.5, weight: .semibold))
                     .foregroundStyle(Theme.cardTextPrimary).lineLimit(1)
             }
-            HStack(alignment: .bottom, spacing: 6) {
-                Text(metaLeft)
-                    .font(.system(size: 11))
-                    .foregroundStyle(Theme.cardTextSecondary)
-                    .lineLimit(item.type == .file ? 3 : 1)
-                    .multilineTextAlignment(.leading)
-                    .fixedSize(horizontal: false, vertical: true)
-                Spacer(minLength: 4)
-                if index < 9 {
-                    HStack(spacing: 3) {
-                        Text(settings.quickPasteModifierDisplay)
-                            .font(.system(size: 11, weight: .semibold))
-                        Text("\(index + 1)")
-                            .font(.system(size: 11, weight: .semibold))
-                    }
-                    .foregroundStyle(Theme.cardTextTertiary)
+            footerLine
+                .frame(minHeight: item.type == .link ? 17 : Theme.footerHeight)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    private var footerLine: some View {
+        HStack(alignment: .center, spacing: 6) {
+            Text(metaLeft)
+                .font(.system(size: 10.5))
+                .foregroundStyle(Theme.cardTextSecondary)
+                .lineLimit(item.type == .file ? 3 : 1)
+                .multilineTextAlignment(.leading)
+                .fixedSize(horizontal: false, vertical: true)
+            Spacer(minLength: 4)
+            if index < 9 {
+                HStack(spacing: 3) {
+                    Text(settings.quickPasteModifierDisplay)
+                        .font(.system(size: 10.5, weight: .semibold))
+                    Text("\(index + 1)")
+                        .font(.system(size: 10.5, weight: .semibold))
                 }
+                .foregroundStyle(Theme.cardTextTertiary)
             }
         }
-        .padding(.top, 8)
     }
 
     private var isSingleImageFile: Bool {
@@ -406,28 +418,6 @@ struct ClipCardView: View {
         }
         image.isTemplate = false
         return image
-    }
-}
-
-private struct CheckerboardBackground: View {
-    var square: CGFloat = 8
-
-    var body: some View {
-        Canvas { context, size in
-            context.fill(Path(CGRect(origin: .zero, size: size)), with: .color(.white))
-            let columns = Int(ceil(size.width / square))
-            let rows = Int(ceil(size.height / square))
-            for row in 0..<max(rows, 0) {
-                for column in 0..<max(columns, 0) where (row + column).isMultiple(of: 2) {
-                    let rect = CGRect(x: CGFloat(column) * square,
-                                      y: CGFloat(row) * square,
-                                      width: square,
-                                      height: square)
-                    context.fill(Path(rect), with: .color(Color(white: 0.87)))
-                }
-            }
-        }
-        .drawingGroup()
     }
 }
 

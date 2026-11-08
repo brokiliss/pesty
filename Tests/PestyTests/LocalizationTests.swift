@@ -40,10 +40,11 @@ final class LocalizationTests: XCTestCase {
         LocalizationManager.shared.language = .chineseSimplified
         XCTAssertEqual("Search".localized, "搜索")
         XCTAssertEqual("Pesty Settings".localized, "Pesty 设置")
-        XCTAssertEqual("Play sound when a new clip is captured".localized, "捕获新内容时播放音效")
+        XCTAssertEqual("Play sound when a clip is copied".localized, "复制时播放音效")
+        XCTAssertEqual("Sound volume".localized, "音效音量")
         XCTAssertEqual(
-            "Clear the image cache 3 minutes after the bar closes".localized,
-            "面板收起 3 分钟后清空图片缓存"
+            "Clear the image cache after the bar closes".localized,
+            "面板收起后清空图片缓存"
         )
     }
 

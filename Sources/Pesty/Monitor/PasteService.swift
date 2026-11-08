@@ -99,7 +99,7 @@ enum PasteService {
                       format: PasteFormat = .original) {
         let change = copy(item, format: format)
         monitor.suppressUntilChangeCount = change
-        if Settings.shared.playSound { NSSound(named: "Pop")?.play() }
+        if Settings.shared.playSound { FeedbackSound.play() }
 
         guard let target = targetApp, !target.isTerminated else { return }
 
